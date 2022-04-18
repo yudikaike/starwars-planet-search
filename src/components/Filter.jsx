@@ -20,6 +20,28 @@ const Filter = () => {
     'surface_water',
   ];
 
+  const newFilters = filterByNumericValues
+    .reduce((filteredArray, currentFilter) => filteredArray
+      .filter((columnName) => columnName !== currentFilter.column), columns);
+
+  const removeFilter = ({ target }) => {
+    setFilterByNumericValues(filterByNumericValues
+      .filter((filter) => filter.column !== target.value));
+  };
+
+  const removeAllFilters = () => {
+    setFilterByNumericValues([]);
+  };
+
+  const handleSubmit = () => {
+    setFilterByNumericValues([...filterByNumericValues, {
+      column,
+      comparison,
+      value,
+    }]);
+    setColumn(newFilters[0]);
+  };
+
   return (
     <div>
       <input
@@ -32,12 +54,9 @@ const Filter = () => {
         onChange={ ({ target }) => setColumn(target.value) }
         value={ column }
       >
-        { filterByNumericValues
-          .reduce((filteredArray, currentFilter) => filteredArray
-            .filter((columnName) => columnName !== currentFilter.column), columns)
-          .map((columnValue) => (
-            <option key={ columnValue }>{ columnValue }</option>
-          )) }
+        { newFilters.map((columnValue) => (
+          <option key={ columnValue }>{ columnValue }</option>
+        )) }
       </select>
       <select
         data-testid="comparison-filter"
@@ -57,16 +76,31 @@ const Filter = () => {
       <button
         type="button"
         data-testid="button-filter"
-        onClick={ () => {
-          setFilterByNumericValues([...filterByNumericValues, {
-            column,
-            comparison,
-            value,
-          }]);
-        } }
+        onClick={ handleSubmit }
       >
         Filtrar
       </button>
+      <button
+        type="button"
+        data-testid="button-remove-filters"
+        onClick={ removeAllFilters }
+      >
+        Remover todas filtragems
+      </button>
+      { filterByNumericValues && (
+        filterByNumericValues.map((filter, index) => (
+          <div key={ index } data-testid="filter">
+            {`${filter.column} ${filter.comparison} ${filter.value}`}
+            <button
+              type="button"
+              value={ filter.column }
+              onClick={ removeFilter }
+            >
+              X
+            </button>
+          </div>
+        ))
+      ) }
     </div>
   );
 };
