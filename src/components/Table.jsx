@@ -6,7 +6,7 @@ import tableHeader from '../data/tableHeader';
 import '../css/Table.css';
 
 const Table = () => {
-  const { data, setData, filterByName } = useContext(AppContext);
+  const { data, setData, filterByName, filterByNumericValues } = useContext(AppContext);
 
   useEffect(() => {
     fetch('https://swapi-trybe.herokuapp.com/api/planets/')
@@ -45,13 +45,36 @@ const Table = () => {
     </table>
   );
 
+  const filterTable = () => {
+    const arrayFilteredByName = data
+      .filter(({ name }) => name.includes(filterByName.name));
+    const arrayFilteredByNumericValues = filterByNumericValues
+      .reduce((filteredArray, currentFilter) => filteredArray
+        .filter((planet) => {
+          switch (currentFilter.comparison) {
+          case 'maior que':
+            if (Number(planet[currentFilter.column])
+            > Number(currentFilter.value)) return true;
+            break;
+          case 'menor que':
+            if (Number(planet[currentFilter.column])
+            < Number(currentFilter.value)) return true;
+            break;
+          case 'igual a':
+            if (Number(planet[currentFilter.column])
+            === Number(currentFilter.value)) return true;
+            break;
+          default:
+            return false;
+          }
+          return null;
+        }), arrayFilteredByName);
+    return renderTable(arrayFilteredByNumericValues);
+  };
+
   return (
     <div>
-      {
-        filterByName !== ''
-          ? renderTable(data.filter(({ name }) => name.includes(filterByName.name)))
-          : renderTable(data)
-      }
+      { filterTable() }
     </div>
   );
 };

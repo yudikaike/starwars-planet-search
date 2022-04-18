@@ -9,11 +9,14 @@ import Filter from './components/Filter';
 function App() {
   const [data, setData] = useState([]);
   const [filterByName, setFilterByName] = useState({ name: '' });
+  const [filterByNumericValues, setFilterByNumericValues] = useState([]);
   const contextValue = {
     data,
     setData,
     filterByName,
     setFilterByName,
+    filterByNumericValues,
+    setFilterByNumericValues,
   };
 
   return (
