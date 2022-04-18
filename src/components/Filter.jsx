@@ -12,6 +12,14 @@ const Filter = () => {
   const [comparison, setComparison] = useState('maior que');
   const [value, setValue] = useState(0);
 
+  const columns = [
+    'population',
+    'orbital_period',
+    'diameter',
+    'rotation_period',
+    'surface_water',
+  ];
+
   return (
     <div>
       <input
@@ -24,11 +32,12 @@ const Filter = () => {
         onChange={ ({ target }) => setColumn(target.value) }
         value={ column }
       >
-        <option>population</option>
-        <option>orbital_period</option>
-        <option>diameter</option>
-        <option>rotation_period</option>
-        <option>surface_water</option>
+        { filterByNumericValues
+          .reduce((filteredArray, currentFilter) => filteredArray
+            .filter((columnName) => columnName !== currentFilter.column), columns)
+          .map((columnValue) => (
+            <option key={ columnValue }>{ columnValue }</option>
+          )) }
       </select>
       <select
         data-testid="comparison-filter"
