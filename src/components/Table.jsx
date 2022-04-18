@@ -6,15 +6,15 @@ import tableHeader from '../data/tableHeader';
 import '../css/Table.css';
 
 const Table = () => {
-  const { data, setData } = useContext(AppContext);
+  const { data, setData, filterByName } = useContext(AppContext);
 
   useEffect(() => {
     fetch('https://swapi-trybe.herokuapp.com/api/planets/')
-      .then((response) => response.json())
+      .then((res) => res.json())
       .then(({ results }) => setData(results));
-  }, [setData]);
+  });
 
-  const renderTable = () => (
+  const renderTable = (array) => (
     <table className="table">
       <thead>
         <tr>
@@ -24,7 +24,7 @@ const Table = () => {
         </tr>
       </thead>
       <tbody>
-        { data.map((planet) => (
+        { array.map((planet) => (
           <tr key={ planet.name }>
             <td>{ planet.name }</td>
             <td>{ planet.rotation_period }</td>
@@ -46,7 +46,13 @@ const Table = () => {
   );
 
   return (
-    <div>{ renderTable() }</div>
+    <div>
+      {
+        filterByName !== ''
+          ? renderTable(data.filter(({ name }) => name.includes(filterByName.name)))
+          : renderTable(data)
+      }
+    </div>
   );
 };
 
